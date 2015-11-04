@@ -15,8 +15,9 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
 
-  s.add_dependency   'activerecord', ['>= 4.0', '< 5']
-  s.add_dependency   'paperclip', '~> 4.1'
+  s.add_dependency 'activerecord', ['>= 4.0', '< 5']
+  s.add_dependency 'protected_attributes'
+  s.add_dependency 'paperclip', '~> 4.1'
 
   s.add_development_dependency "bundler", "~> 1.7"
   s.add_development_dependency "rake", "~> 10.0"

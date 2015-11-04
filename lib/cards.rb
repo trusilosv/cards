@@ -1,6 +1,9 @@
+require 'active_record'
+require 'protected_attributes'
 require 'paperclip'
-require 'cards/engine'
+# require 'cards/engine'
 require 'cards/attachments'
+require 'versioning'
 
 Paperclip::Attachment.default_options.merge!(
   :path => ":rails_root/public/system/:attachment/:id/:style/:basename.:extension",
@@ -18,6 +21,10 @@ module Cards
 
   def self.project_class
     @@project_class_name.constantize
+  end
+
+  def self.common_tags
+    []
   end
 
   #TODO: Move not-deleted tags functionality to tracker.
@@ -38,7 +45,7 @@ module Cards
       .select("COALESCE((#{tag_scope.to_sql}), '{}') AS tag_names")
       .where(id: card_id)
       .first
-    OpenStruct.new(result.attributes)
+    OpenStruct.new(result.attributes) if result
   end
 
   def self.find_cards(card_ids)

@@ -4,6 +4,7 @@ PATH
     cards (0.0.1a)
       activerecord (>= 4.0, < 5)
       paperclip (~> 4.1)
+      protected_attributes
 
 GEM
   remote: https://rubygems.org/
@@ -39,6 +40,9 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (= 0.3.0)
+    pg (0.18.3)
+    protected_attributes (1.1.3)
+      activemodel (>= 4.0.1, < 5.0)
     rake (10.4.2)
     rspec (3.3.0)
       rspec-core (~> 3.3.0)
@@ -63,6 +67,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.7)
   cards!
+  pg
   rake (~> 10.0)
   rspec
 
