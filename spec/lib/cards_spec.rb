@@ -10,8 +10,17 @@ describe Cards do
   let!(:second_card) { described_class.create_card(params.merge(name: 'Second name', tag_list: 'bug')) }
 
   describe '.project_tags' do
+    subject { described_class.project_tags(some_project_id) }
+    let(:some_project_id) { project_id }
+
     context "when project doesn't exist" do
-      it { expect(described_class.project_tags(1)).to be_empty }
+      let(:some_project_id) { 1 }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "when project has tags" do
+      it { is_expected.to eq(%w[bug design]) }
     end
   end
 
