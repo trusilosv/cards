@@ -2,6 +2,7 @@ require 'rspec'
 require 'cards'
 require 'yaml'
 require 'byebug'
+require 'database_cleaner'
 
 module Rails
   def self.env
@@ -27,3 +28,16 @@ DatabaseTasks.db_dir = 'db'
 DatabaseTasks.drop_current('test')
 DatabaseTasks.create_current('test')
 DatabaseTasks.migrate
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
+end
