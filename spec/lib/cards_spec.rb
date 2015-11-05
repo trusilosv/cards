@@ -39,6 +39,7 @@ describe Cards do
       it { expect(subject.name).to eq(name) }
       it { expect(subject.description).to eq(description) }
       it { expect(subject.id).to be_present }
+      it { expect(subject.tag_names).to eq(['design']) }
     end
   end
 
