@@ -3,7 +3,6 @@ require 'protected_attributes'
 require 'paperclip'
 # require 'cards/engine'
 require 'cards/attachments'
-require 'versioning'
 require 'squeel'
 
 Paperclip::Attachment.default_options.merge!(
