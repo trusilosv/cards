@@ -26,5 +26,10 @@ describe Cards do
     it { expect{subject}.to change { Cards::Card.count }.by(1) }
     it { expect{subject}.to change { Cards::Tag.count }.by(1) }
     it { expect{subject}.to change { Cards::CardVersion.count }.by(1) }
+
+    context 'response' do
+      it { expect(subject.name).to eq("Name") }
+      it { expect(subject.description).to eq("Description") }
+    end
   end
 end
