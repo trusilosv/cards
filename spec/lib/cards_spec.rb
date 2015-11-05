@@ -25,5 +25,6 @@ describe Cards do
 
     it { expect{subject}.to change { Cards::Card.count }.by(1) }
     it { expect{subject}.to change { Cards::Tag.count }.by(1) }
+    it { expect{subject}.to change { Cards::CardVersion.count }.by(1) }
   end
 end
