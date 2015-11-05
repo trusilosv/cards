@@ -1,6 +1,7 @@
 require 'rspec'
 require 'cards'
 require 'yaml'
+require 'byebug'
 
 module Rails
   def self.env

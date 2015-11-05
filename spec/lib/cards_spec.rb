@@ -24,5 +24,6 @@ describe Cards do
     let(:params) { { name: "Name", description: "Description", tag_list: "design", author_id: author_id, project_id: project_id } }
 
     it { expect{subject}.to change { Cards::Card.count }.by(1) }
+    it { expect{subject}.to change { Cards::Tag.count }.by(1) }
   end
 end

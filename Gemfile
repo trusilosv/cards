@@ -8,4 +8,5 @@ gemspec
 group :development, :test do
   gem "rspec"
   gem "pg"
+  gem "byebug"
 end
