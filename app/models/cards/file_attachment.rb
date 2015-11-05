@@ -5,13 +5,7 @@ module Cards
     attr_protected
 
     belongs_to :card, touch: true
-    # FIXME: Replace it with aggregate_root
-    grabs :project_id, from: :card
-    belongs_to :project, class_name: Cards.project_class_name
     undef_method "build_project", "create_project", "create_project!"
-
-    belongs_to :author, class_name: Cards.author_class_name
-
 
     has_attached_file :file, styles:  { mini:  "75x75", thumb:  "400x300>" }, whiny:  false
 

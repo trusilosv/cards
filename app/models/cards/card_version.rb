@@ -4,7 +4,6 @@ module Cards
 
     attr_protected
     belongs_to :card
-    belongs_to :author, class_name: Cards.author_class_name
 
     before_save :set_version
 

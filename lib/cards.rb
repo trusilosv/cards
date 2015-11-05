@@ -11,17 +11,7 @@ Paperclip::Attachment.default_options.merge!(
 )
 
 module Cards
-  mattr_accessor :author_class_name
-  mattr_accessor :project_class_name
   mattr_accessor :common_tags
-
-  def self.author_class
-    @@author_class_name.constantize
-  end
-
-  def self.project_class
-    @@project_class_name.constantize
-  end
 
   def self.common_tags
     []
