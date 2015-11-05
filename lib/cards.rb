@@ -4,6 +4,7 @@ require 'paperclip'
 # require 'cards/engine'
 require 'cards/attachments'
 require 'versioning'
+require 'squeel'
 
 Paperclip::Attachment.default_options.merge!(
   :path => ":rails_root/public/system/:attachment/:id/:style/:basename.:extension",
