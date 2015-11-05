@@ -65,19 +65,23 @@ module Cards
   end
 
   def self.create_card(attrs)
-    Card.create(attrs)
+    item = Card.create(attrs)
+    OpenStruct.new(item.attributes)
   end
 
   def self.update_card(card_id, attrs)
-    card = Card.find(card_id).update_card(attrs)
+    item = Card.find(card_id).update_card(attrs)
+    OpenStruct.new(item.attributes)
   end
 
   def self.destroy_card(card_id)
     Card.find(card_id).destroy_card
+    nil
   end
 
   def self.rollback_card(card_id)
     Card.find(card_id).destroy
+    nil
   end
 
   private
