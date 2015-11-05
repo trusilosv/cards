@@ -26,4 +26,3 @@ DatabaseTasks.db_dir = 'db'
 DatabaseTasks.drop_current('test')
 DatabaseTasks.create_current('test')
 DatabaseTasks.migrate
-p Cards::Tag.table_name
