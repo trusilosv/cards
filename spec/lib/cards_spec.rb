@@ -30,6 +30,7 @@ describe Cards do
     context 'response' do
       it { expect(subject.name).to eq("Name") }
       it { expect(subject.description).to eq("Description") }
+      it { expect(subject.id).to be_present }
     end
   end
 end
