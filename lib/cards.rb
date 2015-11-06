@@ -1,7 +1,6 @@
 require 'active_record'
 require 'protected_attributes'
 require 'paperclip'
-require 'cards/engine'
 require 'cards/attachments'
 require 'squeel'
 
@@ -12,6 +11,13 @@ Paperclip::Attachment.default_options.merge!(
 
 module Cards
   mattr_accessor :common_tags
+
+  autoload :CardsBase, 'cards/cards_base'
+  autoload :Card, 'cards/card'
+  autoload :CardVersion, 'cards/card_version'
+  autoload :FileAttachment, 'cards/file_attachment'
+  autoload :Tag, 'cards/tag'
+  autoload :Tagging, 'cards/tagging'
 
   def self.common_tags
     []
