@@ -5,7 +5,6 @@ module Cards
     attr_protected
 
     belongs_to :card, touch: true
-    undef_method "build_project", "create_project", "create_project!"
 
     has_attached_file :file, styles:  { mini:  "75x75", thumb:  "400x300>" }, whiny:  false
 
