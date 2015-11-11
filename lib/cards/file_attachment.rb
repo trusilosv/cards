@@ -19,23 +19,6 @@ module Cards
       { conditions:  "file_content_type like 'image/%'" }
     }
 
-    def self.bulk_create(parent, attachments, author, draft=false, project)
-      return false unless attachments
-      attachments.collect! do |new_attachment|
-        parent_card = draft ? nil : Cards.find_card(parent.card_id)
-        current_attachments(parent.card_id).detect do |file|
-          return false if file.file_file_name == new_attachment.original_filename.gsub(/\s/, '_')
-        end
-        if draft
-          new_attachment = Cards::FileAttachment.create(file: new_attachment, author: author, project: project)
-        else
-          new_attachment = parent_card.attachments.create(file: new_attachment, author: author, project: project)
-        end
-        new_attachment.valid? ? new_attachment : (return false)
-      end
-      attachments
-    end
-
     def destroy
       if draft?
         super # delete fiile from db if new story page
@@ -80,9 +63,6 @@ module Cards
       attachable.attachments.where(["id IN (?) AND file_content_type LIKE 'image/%'", attachments_cache_ids])
     end
 
-    def self.current_attachments(card_id)
-      Cards.find_attachments(card_id)
-    end
     def attachments_cache_ids
       attachable.attachments_cache ? attachable.attachments_cache.split(",").uniq : []
     end
