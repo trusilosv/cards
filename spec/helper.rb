@@ -20,6 +20,7 @@ ActiveSupport::Dependencies.autoload_paths << File.dirname(Pathname.new(__FILE__
 
 include ActiveRecord::Tasks
 config = YAML.load_file('spec/database.yml')
+ActiveRecord::Base.logger = Logger.new('log/test.log')
 ActiveRecord::Base.configurations = config
 ActiveRecord::Base.establish_connection config['cards_test']
 
