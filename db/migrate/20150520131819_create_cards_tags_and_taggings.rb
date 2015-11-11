@@ -16,6 +16,9 @@ class CreateCardsTagsAndTaggings < ActiveRecord::Migration
       t.integer  "project_id", :null => false
     end
 
+    add_foreign_key :cards_taggings, :cards_cards, column: :card_id
+    add_foreign_key :cards_taggings, :cards_tags, column: :tag_id
+
     add_index "cards_taggings", ["project_id"], :name => "index_cards_taggings_on_project_id"
     add_index "cards_taggings", ["card_id"], :name => "index_cards_taggings_on_taggable_id_and_taggable_type"
     add_index "cards_taggings", ["tag_id", "card_id"], :name => "index_cards_taggings_on_tag_id_and_card_id", :unique => true
