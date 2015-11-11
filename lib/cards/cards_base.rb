@@ -1,9 +1,7 @@
 module Cards
-  module CardsBase
-    extend ActiveSupport::Concern
+  class CardsBase < ActiveRecord::Base
+    establish_connection :"cards_#{Rails.env}"
 
-    included do
-      establish_connection :"cards_#{Rails.env}"
-    end
+    self.abstract_class = true
   end
 end

@@ -1,8 +1,7 @@
 require 'cards/versioning/has_versioning'
 
 module Cards
-  class Card < ActiveRecord::Base
-    include CardsBase
+  class Card < CardsBase
     include Versioning::Model
 
     attr_accessible :description, :name, :version, :tag_list, :project_id, :author_id, :parent_id, :mark_as_deleted

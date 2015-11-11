@@ -1,7 +1,5 @@
 module Cards
-  class Tagging < ::ActiveRecord::Base
-    include CardsBase
-
+  class Tagging < CardsBase
     belongs_to :tag
     belongs_to :card, inverse_of: :taggings
 

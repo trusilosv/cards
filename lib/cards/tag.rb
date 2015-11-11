@@ -1,7 +1,5 @@
 module Cards
-  class Tag < ActiveRecord::Base
-    include CardsBase
-
+  class Tag < CardsBase
     attr_accessible :name, :project_id
 
     has_many :taggings

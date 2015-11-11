@@ -1,7 +1,5 @@
 module Cards
-  class CardVersion < ActiveRecord::Base
-    include CardsBase
-
+  class CardVersion < CardsBase
     attr_protected
     belongs_to :card
 

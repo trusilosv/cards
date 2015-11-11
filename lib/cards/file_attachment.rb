@@ -1,7 +1,5 @@
 module Cards
-  class FileAttachment < ActiveRecord::Base
-    include CardsBase
-
+  class FileAttachment < CardsBase
     attr_protected
 
     belongs_to :card, touch: true
