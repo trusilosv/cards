@@ -1,23 +1,17 @@
 require 'active_record'
 require 'protected_attributes'
-require 'paperclip'
 require 'cards/attachments'
 require 'squeel'
-
-Paperclip::Attachment.default_options.merge!(
-  :path => ":rails_root/public/system/:attachment/:id/:style/:basename.:extension",
-  :url => "/system/:attachment/:id/:style/:basename.:extension"
-)
 
 module Cards
   mattr_accessor :common_tags
 
-  autoload :CardsBase, 'cards/cards_base'
-  autoload :Card, 'cards/card'
-  autoload :CardVersion, 'cards/card_version'
-  autoload :FileAttachment, 'cards/file_attachment'
-  autoload :Tag, 'cards/tag'
-  autoload :Tagging, 'cards/tagging'
+  autoload :Models, 'cards/models'
+  # autoload :Card, 'cards/models/card'
+  # autoload :CardVersion, 'cards/models/card_version'
+  # autoload :FileAttachment, 'cards/models/file_attachment'
+  # autoload :Tag, 'cards/models/tag'
+  # autoload :Tagging, 'cards/models/tagging'
 
   def self.common_tags
     []
@@ -25,19 +19,19 @@ module Cards
 
   #TODO: Move not-deleted tags functionality to tracker.
   def self.project_tags(project_id)
-    (Tag.where(project_id: project_id).not_deleted.pluck(:name) | common_tags).sort
+    (Models::Tag.where(project_id: project_id).not_deleted.pluck(:name) | common_tags).sort
   end
 
   def self.all_tags(project_id)
-    (Tag.where(project_id: project_id).pluck(:name) | common_tags).sort
+    (Models::Tag.where(project_id: project_id).pluck(:name) | common_tags).sort
   end
 
   def self.card_tags(card_id)
-    Tag.joins(:taggings).where(taggings: { card_id: card_id } ).order(:name).pluck(:name)
+    Models::Tag.joins(:taggings).where(taggings: { card_id: card_id } ).order(:name).pluck(:name)
   end
 
   def self.find_card(card_id)
-    result = Card.select("cards_cards.*")
+    result = Models::Card.select("cards_cards.*")
       .select("COALESCE((#{tag_scope.to_sql}), '{}') AS tag_names")
       .where(id: card_id)
       .first
@@ -45,48 +39,48 @@ module Cards
   end
 
   def self.find_cards(card_ids)
-    items = Card.select("cards_cards.*")
+    items = Models::Card.select("cards_cards.*")
       .select("COALESCE((#{tag_scope.to_sql}), '{}') AS tag_names")
       .where(id: card_ids)
     collection_to_open_structs(items)
   end
 
   def self.find_last_version(card_id)
-    item = CardVersion.where(card_id: card_id).order("updated_at DESC").first
+    item = Models::CardVersion.where(card_id: card_id).order("updated_at DESC").first
     OpenStruct.new(item.attributes)
   end
 
   def self.find_child_cards(parent_id)
-    items = Card.select("cards_cards.*")
+    items = Models::Card.select("cards_cards.*")
       .where(parent_id: parent_id)
       .to_a
     collection_to_open_structs(items)
   end
 
   def self.create_card(attrs)
-    item = Card.create(attrs)
+    item = Models::Card.create(attrs)
     OpenStruct.new(item.attributes)
   end
 
   def self.update_card(card_id, attrs)
-    item = Card.find(card_id).update_card(attrs)
+    item = Models::Card.find(card_id).update_card(attrs)
     OpenStruct.new(item.attributes)
   end
 
   def self.destroy_card(card_id)
-    Card.find(card_id).destroy_card
+    Models::Card.find(card_id).destroy_card
     nil
   end
 
   def self.rollback_card(card_id)
-    Card.find(card_id).destroy
+    Models::Card.find(card_id).destroy
     nil
   end
 
   private
 
   def self.tag_scope
-    Tag.joins(:taggings).where("cards_taggings.card_id = cards_cards.id").select("ARRAY_AGG(name ORDER BY name)")
+    Models::Tag.joins(:taggings).where("cards_taggings.card_id = cards_cards.id").select("ARRAY_AGG(name ORDER BY name)")
   end
 
   def self.collection_to_open_structs(items)

@@ -1,4 +1,5 @@
 require 'helper'
+require 'cards/models'
 
 describe Cards do
   let(:author_id) { 11111 }
@@ -46,9 +47,9 @@ describe Cards do
   describe '.create_card' do
     subject { described_class.create_card(params.merge(tag_list: "new_tag")) }
 
-    it { expect{subject}.to change { Cards::Card.count }.by(1) }
-    it { expect{subject}.to change { Cards::Tag.count }.by(1) }
-    it { expect{subject}.to change { Cards::CardVersion.count }.by(1) }
+    it { expect{subject}.to change { Cards::Models::Card.count }.by(1) }
+    it { expect{subject}.to change { Cards::Models::Tag.count }.by(1) }
+    it { expect{subject}.to change { Cards::Models::CardVersion.count }.by(1) }
 
     context 'response' do
       it { expect(subject.name).to eq(name) }
@@ -61,7 +62,7 @@ describe Cards do
 
       context 'card' do
         def card
-          Cards::Card.first
+          Cards::Models::Card.first
         end
 
         it { expect(card.name).to eq(name) }

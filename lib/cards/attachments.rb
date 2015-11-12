@@ -1,7 +1,7 @@
 module Cards
   module Files
-    def self.draft_attachments_for_user(project, author)
-      items = Cards::FileAttachment.where(author_id: author, card_id: nil, project_id: project)
+    def self.draft_attachments_for_user(project_id, author_id)
+      items = Models::FileAttachment.where(author_id: author_id, card_id: nil, project_id: project_id)
       collection_to_open_structs(items)
     end
 
@@ -11,7 +11,7 @@ module Cards
         current_attachments(params.slice(:card_id, :project_id)).detect do |file|
           return false if file.file_file_name == new_file.original_filename.gsub(/\s/, '_')
         end
-        new_attachment = Cards::FileAttachment.new(file: new_file, author_id: params[:author_id], project_id: params[:project_id])
+        new_attachment = Models::FileAttachment.new(file: new_file, author_id: params[:author_id], project_id: params[:project_id])
         unless params[:draft]
           new_attachment.card_id = parent_card.id
         end
@@ -22,7 +22,7 @@ module Cards
     end
 
     def self.find_attachments(card_id)
-      items = FileAttachment.joins(:card)
+      items = Models::FileAttachment.joins(:card)
         .where(cards_cards: { id: card_id })
         .where("cards_file_attachments.id = ANY(STRING_TO_ARRAY(cards_cards.attachments_cache, ',')::int[])")
       collection_to_open_structs(items)
@@ -31,7 +31,7 @@ module Cards
     private
 
     def self.current_attachments(conditions)
-      Cards::FileAttachment.where(conditions.reverse_merge(card_id: nil))
+      Models::FileAttachment.where(conditions.reverse_merge(card_id: nil))
     end
 
     def self.collection_to_open_structs(items)
