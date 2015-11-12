@@ -14,6 +14,7 @@ module Cards
       has_many :children, foreign_key: :parent_id, class_name: 'Cards::Card'
 
       after_save :store_tags
+      after_create :update_draft_attachments
 
       def tag_list
         if attribute_changed?('tag_list')
@@ -39,16 +40,6 @@ module Cards
 
       def attachments_cache_ids
         attachments_cache ? attachments_cache.split(",") : []
-      end
-
-      def update_attachments(attachment_ids)
-        if attachment_ids.present?
-          FileAttachment.find(attachment_ids).each do |attachment|
-            attachment.card_id = id
-            attachment.save
-            attachment.updated_attachments_cache_ids
-          end
-        end
       end
 
       def update_card(attrs)
@@ -82,6 +73,14 @@ module Cards
           removed_tags = self.tag_ids - existing_tags(@tag_list).map(&:id)
           self.taggings.where(tag_id: removed_tags).destroy_all
           self.tag_ids = existing_tags(@tag_list).map(&:id)
+        end
+      end
+
+      def update_draft_attachments
+        attachment_ids = FileAttachment.where(author_id: author_id, card_id: nil, project_id: project_id).pluck(:id)
+        if attachment_ids.present?
+          FileAttachment.where(id: attachment_ids).update_all(card_id: self.id)
+          Card.where(id: self.id).update_all(attachments_cache: attachment_ids.sort.join(','))
         end
       end
     end
