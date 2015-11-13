@@ -42,10 +42,6 @@ module Cards
         attachments_cache ? attachments_cache.split(",") : []
       end
 
-      def update_card(attrs)
-        self.update_attributes(attrs)
-      end
-
       def destroy_card
         self.update_attributes(mark_as_deleted: !self.mark_as_deleted)
       end

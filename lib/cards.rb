@@ -63,7 +63,8 @@ module Cards
   end
 
   def self.update_card(card_id, attrs)
-    item = Models::Card.find(card_id).update_card(attrs)
+    item = Models::Card.find(card_id)
+    item.update_attributes(attrs)
     OpenStruct.new(item.attributes)
   end
 
