@@ -23,11 +23,11 @@ module Cards
       }
 
       def destroy
-        if draft?
-          super # delete fiile from db if new story page
+        if self.card_id
+          updated_ids = attachments_ids - [id]
+          card.update_attribute :attachments_cache, updated_ids.sort.join(",")
         else
-          updated_ids = attachable.attachments_cache_ids - [id.to_s]
-          attachable.update_attribute :attachments_cache, updated_ids.sort.join(",")
+          super # delete fiile from db if new story page
         end
       end
 
@@ -40,8 +40,8 @@ module Cards
       end
 
       def updated_attachments_cache_ids
-        updated_ids = attachable.attachments_cache_ids << id.to_s
-        attachable.update_attribute :attachments_cache, updated_ids.sort.join(",")
+        updated_ids = attachments_ids << id
+        card.update_attribute :attachments_cache, updated_ids.sort.join(",")
       end
 
       def attached?
@@ -58,8 +58,12 @@ module Cards
 
       private
 
-      def attachable
-        @_attachable ||= Cards::Card.find(self.card_id)
+      def card
+        @_card ||= Card.find_by_id(self.card_id)
+      end
+
+      def attachments_ids
+        FileAttachment.where(card_id: self.card_id).map(&:id)
       end
 
       def current_attached_images

@@ -8,12 +8,12 @@ module Cards
     def self.bulk_create(params)
       return false unless params[:attachments]
       items = params[:attachments].map do |new_file|
-        current_attachments(params.slice(:card_id, :project_id)).detect do |file|
+        current_attachments(params.slice(:card_id, :project_id).reverse_merge(card_id: nil)).detect do |file|
           return false if file.file_file_name == new_file.original_filename.gsub(/\s/, '_')
         end
         new_attachment = Models::FileAttachment.new(file: new_file, author_id: params[:author_id], project_id: params[:project_id])
         unless params[:draft]
-          new_attachment.card_id = parent_card.id
+          new_attachment.card_id = params[:card_id]
         end
         new_attachment.save
         new_attachment.valid? ? new_attachment : (return false)
@@ -28,11 +28,15 @@ module Cards
       collection_to_open_structs(items)
     end
 
-    private
-
     def self.current_attachments(conditions)
-      Models::FileAttachment.where(conditions.reverse_merge(card_id: nil))
+      Models::FileAttachment.where(conditions)
     end
+
+    def self.destroy_attachment(id)
+      Models::FileAttachment.destroy(current_attachments(id: id))
+    end
+
+    private
 
     def self.collection_to_open_structs(items)
       items.map do |item|
