@@ -30,12 +30,12 @@ module Cards
 
     def self.destroy_attachment(id)
       attachment = current_attachments(id: id).first.destroy_attachment
-      collection_to_open_structs([attachment])
+      wrap(attachment)
     end
 
     def self.restore_attachment(id)
       attachment = current_attachments(id: id).first.restore_attachment
-      collection_to_open_structs([attachment])
+      wrap(attachment)
     end
 
     private
@@ -46,19 +46,23 @@ module Cards
 
     def self.collection_to_open_structs(items)
       items.map do |item|
-        OpenStruct.new(
-          file_url: item.file.url,
-          thumb_url: item.file.url(:mini),
-          file_name: item.file_file_name,
-          extension: item.extension,
-          is_image: item.image?,
-          updated_at: item.updated_at,
-          content_type: item.file_content_type,
-          file_size: item.file.size,
-          author_id: item.author_id,
-          id: item.id
-        )
+        wrap(item)
       end
+    end
+
+    def self.wrap(item)
+      OpenStruct.new(
+        file_url: item.file.url,
+        thumb_url: item.file.url(:mini),
+        file_name: item.file_file_name,
+        extension: item.extension,
+        is_image: item.image?,
+        updated_at: item.updated_at,
+        content_type: item.file_content_type,
+        file_size: item.file.size,
+        author_id: item.author_id,
+        id: item.id
+      )
     end
 
     def self.current_attachmens_params(params)
