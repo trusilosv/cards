@@ -22,15 +22,6 @@ module Cards
         { conditions:  "file_content_type like 'image/%'" }
       }
 
-      def destroy
-        if self.card_id
-          updated_ids = attachments_ids - [id]
-          card.update_attribute :attachments_cache, updated_ids.sort.join(",")
-        else
-          super # delete fiile from db if new story page
-        end
-      end
-
       def extension
         (self.file_file_name.match(/\.(\w+)$/)[1] ).downcase rescue ""
       end
@@ -56,6 +47,23 @@ module Cards
         self.card_id.nil?
       end
 
+      def destroy_attachment
+        return if self.nil?
+        if self.card_id
+          updated_ids = attachments_ids - [id]
+          card.update_attribute :attachments_cache, updated_ids.sort.join(",")
+        else
+          self.destroy
+        end
+        self
+      end
+
+      def restore_attachment
+        return if self.nil?
+        self.updated_attachments_cache_ids
+        self
+      end
+
       private
 
       def card
@@ -71,19 +79,7 @@ module Cards
       end
 
       def attachments_cache_ids
-        attachable.attachments_cache ? attachable.attachments_cache.split(",").uniq : []
-      end
-
-      def self.destroy_attachment(attachment)
-        return if attachment.nil?
-        attachment.destroy
-        attachment
-      end
-
-      def self.restore_attachment(attachment)
-        return if attachment.nil?
-        attachment.updated_attachments_cache_ids
-        attachment
+        card ? card.current_attachments : []
       end
     end
   end

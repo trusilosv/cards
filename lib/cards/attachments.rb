@@ -28,10 +28,14 @@ module Cards
       collection_to_open_structs(items)
     end
 
+    def self.destroy_attachment(id)
+      attachment = current_attachments(id: id).first.destroy_attachment
+      collection_to_open_structs([attachment])
     end
 
-    def self.destroy_attachment(id)
-      Models::FileAttachment.destroy(current_attachments(id: id))
+    def self.restore_attachment(id)
+      attachment = current_attachments(id: id).first.restore_attachment
+      collection_to_open_structs([attachment])
     end
 
     private
@@ -54,6 +58,14 @@ module Cards
           author_id: item.author_id,
           id: item.id
         )
+      end
+    end
+
+    def self.current_attachmens_params(params)
+      if params[:draft]
+        params.slice(:card_id, :project_id).reverse_merge(card_id: nil)
+      else
+        {id: Cards.find_card(params[:card_id]).attachments_cache_ids}
       end
     end
   end
