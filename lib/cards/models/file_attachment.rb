@@ -41,7 +41,7 @@ module Cards
 
       def updated_attachments_cache_ids
         updated_ids = attachments_ids << id
-        card.update_attribute :attachments_cache, updated_ids.sort.join(",")
+        card.update_attribute :attachments_cache, updated_ids.uniq.sort.join(",")
       end
 
       def attached?
@@ -63,7 +63,7 @@ module Cards
       end
 
       def attachments_ids
-        FileAttachment.where(card_id: self.card_id).map(&:id)
+        FileAttachment.where(id: attachments_cache_ids).map(&:id)
       end
 
       def current_attached_images

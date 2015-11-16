@@ -31,7 +31,7 @@ module Cards
       end
 
       def current_attachments
-        self.attachments.where(id: attachments_cache_ids)
+        Models::FileAttachment.where(id: attachments_cache_ids).map(&:id) || []
       end
 
       def current_attached_images
