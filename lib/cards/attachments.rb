@@ -69,7 +69,7 @@ module Cards
       if params[:draft]
         params.slice(:card_id, :project_id).reverse_merge(card_id: nil)
       else
-        {id: Cards.find_card(params[:card_id]).attachments_cache_ids}
+        {id: Models::Card.find(params[:card_id]).attachments_cache_ids}
       end
     end
   end
