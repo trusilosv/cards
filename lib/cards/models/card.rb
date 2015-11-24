@@ -9,9 +9,9 @@ module Cards
       has_versioning only: ['name', 'description'], time_interval: 20.seconds
       has_many :taggings, inverse_of: :card
       has_many :tags, -> { uniq }, through: :taggings, dependent: :destroy
-      has_many :attachments, class_name: "Cards::FileAttachment", dependent: :destroy
-      belongs_to :parent, class_name: 'Cards::Card'
-      has_many :children, foreign_key: :parent_id, class_name: 'Cards::Card'
+      has_many :attachments, class_name: "FileAttachment", dependent: :destroy
+      belongs_to :parent, class_name: 'Card'
+      has_many :children, foreign_key: :parent_id, class_name: 'Card'
 
       after_save :store_tags
       after_create :update_draft_attachments
