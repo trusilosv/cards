@@ -59,13 +59,13 @@ module Cards
 
   def self.create_card(attrs)
     item = Models::Card.create(attrs)
-    OpenStruct.new(item.attributes)
+    OpenStruct.new(item.attributes.merge(tag_names: item.tag_list))
   end
 
   def self.update_card(card_id, attrs)
     item = Models::Card.find(card_id)
     item.update_attributes(attrs)
-    OpenStruct.new(item.attributes)
+    OpenStruct.new(item.attributes.merge(tag_names: item.tag_list))
   end
 
   def self.destroy_card(card_id)
