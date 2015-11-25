@@ -79,7 +79,7 @@ module Cards
       end
 
       def attachments_cache_ids
-        card ? card.attachments_cache.split(',') : []
+        card && card.attachments_cache ? card.attachments_cache.split(',') : []
       end
     end
   end
