@@ -31,8 +31,9 @@ module Cards
   end
 
   def self.versions(card_id, versions)
-    items = Models::CardVersion.select("card_id, version, name")
+    items = Models::CardVersion.select("card_id, version, name, description")
       .select('lead(name, 1) OVER (order by version DESC) as previous_name')
+      .select('lead(description, 1) OVER (order by version DESC) as previous_description')
       .where(card_id: card_id)
       .order('version DESC')
     collection_to_open_structs(items)
