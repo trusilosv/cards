@@ -44,6 +44,20 @@ describe Cards do
     end
   end
 
+  describe '.versions' do
+    subject(:first) { described_class.versions(first_card.id, [2,1]).first }
+    subject(:last) { described_class.versions(first_card.id, [2,1]).last }
+    let(:new_name) { "New Name" }
+    let(:new_author_id) { author_id + 1 }
+
+    before(:each) do
+      described_class.update_card(first_card.id, name: new_name, author_id: new_author_id)
+    end
+
+    it { expect(first.name).to eq(new_name) }
+    it { expect(first.previous_name).to eq(name) }
+  end
+
   describe '.create_card' do
     subject { described_class.create_card(params.merge(tag_list: "new_tag")) }
 
