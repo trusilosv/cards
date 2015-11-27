@@ -31,7 +31,7 @@ module Cards
   end
 
   def self.versions(card_id, versions)
-    items = Models::CardVersion.select("card_id, version, name, description")
+    items = Models::CardVersion.select("card_id, version, name, description, author_id")
       .select('lead(name, 1) OVER (order by version DESC) as previous_name')
       .select('lead(description, 1) OVER (order by version DESC) as previous_description')
       .where(card_id: card_id)

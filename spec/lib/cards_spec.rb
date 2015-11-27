@@ -60,6 +60,7 @@ describe Cards do
     it { expect(first.previous_name).to eq(name) }
     it { expect(first.description).to eq(description) }
     it { expect(first.previous_description).to eq(description) }
+    it { expect(first.author_id).to eq(new_author_id) }
   end
 
   describe '.create_card' do
