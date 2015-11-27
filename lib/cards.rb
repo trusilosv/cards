@@ -35,6 +35,7 @@ module Cards
       .select('lead(name, 1) OVER (order by version DESC) as previous_name')
       .select('lead(description, 1) OVER (order by version DESC) as previous_description')
       .where(card_id: card_id)
+      .where(version: versions)
       .order('version DESC')
     collection_to_open_structs(items)
   end
