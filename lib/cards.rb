@@ -14,7 +14,7 @@ module Cards
   # autoload :Tagging, 'cards/models/tagging'
 
   def self.common_tags
-    []
+    @@common_tags || []
   end
 
   #TODO: Move not-deleted tags functionality to tracker.
