@@ -42,6 +42,13 @@ module Cards
     collection_to_open_structs(items)
   end
 
+  def self.find_version(card_id, version)
+    item = Models::CardVersion.select("card_id, version, name, description, author_id, updated_at")
+      .where(card_id: card_id, version: version)
+      .first
+    OpenStruct.new(item.attributes) if item
+  end
+
   def self.find_card(card_id)
     result = Models::Card.select("cards_cards.*")
       .select("COALESCE((#{tag_scope.to_sql}), '{}') AS tag_names")
