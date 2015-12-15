@@ -28,6 +28,11 @@ module Cards
       collection_to_open_structs(items)
     end
 
+    def self.find_attachments(ids)
+      items = Models::FileAttachment.where(id: ids)
+      collection_to_open_structs(items)
+    end
+
     def self.destroy_attachment(id)
       attachment = current_attachments(id: id).first.destroy_attachment
       wrap(attachment)
