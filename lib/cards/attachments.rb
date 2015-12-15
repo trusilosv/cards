@@ -21,7 +21,7 @@ module Cards
       collection_to_open_structs(items)
     end
 
-    def self.find_attachments(card_id)
+    def self.find_card_attachments(card_id)
       items = Models::FileAttachment.joins(:card)
         .where(cards_cards: { id: card_id })
         .where("cards_file_attachments.id = ANY(STRING_TO_ARRAY(cards_cards.attachments_cache, ',')::int[])")
