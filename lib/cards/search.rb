@@ -3,11 +3,11 @@ module Cards
     def self.by_keyword(project_id, raw_keyword)
       keyword = Regexp.escape raw_keyword.strip
       search_phrase = "%#{keyword}%"
-      items = cards_scope(project_id).where { cards_cards.name =~ my { search_phrase } }
-        
+      items = cards_scope(project_id).where { (cards_cards.name =~ my { search_phrase }) | (cards_cards.description =~ my { search_phrase } ) }
+
       Cards.collection_to_open_structs(items)
     end
-    
+
     def from_title_versions
       @project.stories.joins { versions.outer }.
         where { versions.name =~ my { @pattern } }.
@@ -31,7 +31,7 @@ module Cards
         group { id }.
         order { updated_at.desc }
     end
-    
+
     private
 
     def self.tag_scope
@@ -46,5 +46,5 @@ module Cards
         .group { id }
         .order { cards_cards.updated_at.desc }
     end
-  end  
+  end
 end
