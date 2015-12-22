@@ -3,7 +3,7 @@ module Cards
     def self.by_keyword(project_id, raw_keyword)
       keyword = Regexp.escape raw_keyword.strip
       search_phrase = "%#{keyword}%"
-      items = cards_scope(project_id).where { (cards_cards.name =~ my { search_phrase }) | (cards_cards.description =~ my { search_phrase } ) }
+      items = cards_scope(project_id).where { (cards_card_versions.name =~ my { search_phrase }) | (cards_card_versions.description =~ my { search_phrase } ) }
 
       Cards.collection_to_open_structs(items)
     end
@@ -42,7 +42,9 @@ module Cards
       Models::Card.where(project_id: project_id)
         .select("cards_cards.*")
         .select("COALESCE((#{tag_scope.to_sql}), '{}') AS tag_names")
+        .select("ARRAY_AGG(cards_card_versions.version) AS matched_versions")
         .where { cards_cards.mark_as_deleted == false }
+        .joins { versions.outer }
         .group { id }
         .order { cards_cards.updated_at.desc }
     end
