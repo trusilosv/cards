@@ -1,6 +1,6 @@
 require 'active_record'
 require 'protected_attributes'
-require 'cards/attachments'
+require 'cards/files'
 require 'squeel'
 
 module Cards
