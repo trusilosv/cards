@@ -27,5 +27,26 @@ describe Cards::Search do
       it { expect(subject.second.id).to eq(first_card.id) }
       it { expect(subject.count).to eq(2) }
     end
+
+    context 'when in name of version' do
+      let(:keyword) { "Name" }
+      let(:new_name) { "New Title" }
+
+      before(:each) do
+        Cards.update_card(first_card.id, name: new_name, author_id: author_id + 1)
+      end
+
+      it { expect(subject.first).to have_attributes(id: first_card.id, name: name, version: 1) }
+      it { expect(subject.count).to eq(1) }
+
+      context 'and in another version' do
+        before(:each) do
+          Cards.update_card(first_card.id, name: name, author_id: author_id)
+        end
+
+        it { expect(subject.first).to have_attributes(id: first_card.id, name: name, version: 3, current: true) }
+        it { expect(subject.count).to eq(1) }
+      end
+    end
   end
 end
