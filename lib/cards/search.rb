@@ -6,24 +6,13 @@ module Cards
       items = Models::CardVersion.select("cards_card_versions.card_id as id, cards_card_versions.name, cards_card_versions.description, cards_card_versions.version")
         .select("matched_versions.current")
         .joins("JOIN (#{card_versions_scope(project_id, search_phrase).to_sql}) AS matched_versions ON matched_versions.card_id = cards_card_versions.card_id AND matched_versions.version = cards_card_versions.version ")
-        .order{ updated_at.desc }
+        .order( <<-SQL
+          (case
+          when cards_card_versions.name ilike '#{search_phrase}' then 1 when cards_card_versions.description ilike '#{search_phrase}' then 2 end)
+        SQL
+        )
+        .order{ [matched_versions.current.desc, cards_card_versions.updated_at.desc] }
       Cards.collection_to_open_structs(items)
-    end
-
-    def from_title_versions
-      @project.stories.joins { versions.outer }.
-        where { versions.name =~ my { @pattern } }.
-        where { cards_cards.mark_as_deleted == false }.
-        group { id }.
-        order { updated_at.desc }
-    end
-
-    def from_description_versions
-      @project.stories.joins { versions.outer }.
-        where { versions.description =~ my { @pattern } }.
-        where { cards_cards.mark_as_deleted == false }.
-        group { id }.
-        order { updated_at.desc }
     end
 
     def from_tags

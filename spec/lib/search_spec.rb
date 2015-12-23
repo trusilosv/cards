@@ -36,7 +36,7 @@ describe Cards::Search do
         Cards.update_card(first_card.id, name: new_name, author_id: author_id + 1)
       end
 
-      it { expect(subject.first).to have_attributes(id: first_card.id, name: name, version: 1) }
+      it { expect(subject.first).to have_attributes(id: first_card.id, name: name, version: 1, current: false) }
       it { expect(subject.count).to eq(1) }
 
       context 'and in another version' do
@@ -47,6 +47,22 @@ describe Cards::Search do
         it { expect(subject.first).to have_attributes(id: first_card.id, name: name, version: 3, current: true) }
         it { expect(subject.count).to eq(1) }
       end
+    end
+
+    context '[order]' do
+      subject { described_class.by_keyword(project_id, keyword).map(&:id) }
+      let(:keyword) { "Second" }
+
+      let!(:fifth_card) { Cards.create_card params.merge(description: 'Fourty Second') }
+      let!(:third_card) { Cards.create_card params.merge(description: 'Second') }
+      let!(:fourth_card) { Cards.create_card params.merge(name: 'Fourty Second') }
+
+      before(:each) do
+        Cards.update_card(fifth_card.id, description: 'Fourty', author_id: author_id + 1)
+        Cards.update_card(fourth_card.id, name: 'Fourty', author_id: author_id + 1)
+      end
+
+      it { is_expected.to eq([second_card.id, fourth_card.id, third_card.id, fifth_card.id]) }
     end
   end
 end
