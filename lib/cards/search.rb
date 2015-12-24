@@ -9,7 +9,7 @@ module Cards
         .joins("JOIN (#{card_versions_scope(project_id, search_phrase).to_sql}) AS matched_versions ON matched_versions.card_id = cards_card_versions.card_id AND matched_versions.version = cards_card_versions.version ")
         .order( <<-SQL
           (case
-          when cards_card_versions.name ilike '#{search_phrase}' then 1 when cards_card_versions.description ilike '#{search_phrase}' then 2 end)
+          when cards_card_versions.name ilike '#{search_phrase}' then 1 when cards_card_versions.description ilike '#{search_phrase}' then 2 else 3 end)
         SQL
         )
         .order{ [matched_versions.current.desc, cards_card_versions.updated_at.desc] }
@@ -35,9 +35,18 @@ module Cards
         .select("cards_cards.id as card_id")
         .select("MAX(cards_card_versions.version) AS version")
         .select("(MAX(cards_card_versions.version) = cards_cards.version) AS current")
-        .where { cards_cards.mark_as_deleted == false }
-        .where { (cards_card_versions.name =~ my { search_phrase }) | (cards_card_versions.description =~ my { search_phrase } ) }
         .joins(:card)
+        .joins(<<-SQL
+          LEFT JOIN cards_taggings ON cards_taggings.card_id = cards_card_versions.card_id
+          LEFT JOIN cards_tags ON cards_taggings.tag_id = cards_tags.id
+        SQL
+        )
+        .where { cards_cards.mark_as_deleted == false }
+        .where {
+          (cards_card_versions.name =~ my { search_phrase }) |
+          (cards_card_versions.description =~ my { search_phrase } ) |
+          (cards_tags.name =~ my { search_phrase } )
+        }
         .group("cards_cards.id")
     end
   end

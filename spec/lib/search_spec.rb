@@ -8,7 +8,7 @@ describe Cards::Search do
   let(:description) { "Description" }
   let(:params) { { name: name, description: description, tag_list: "design", author_id: author_id, project_id: project_id } }
   let!(:first_card) { Cards.create_card(params) }
-  let!(:second_card) { Cards.create_card(params.merge(name: 'Second', tag_list: 'bug')) }
+  let!(:second_card) { Cards.create_card(params.merge(name: 'Second', tag_list: ['bug'])) }
 
   describe '.by_keyword' do
     subject { described_class.by_keyword(project_id, keyword) }
@@ -56,13 +56,14 @@ describe Cards::Search do
       let!(:third_card) { Cards.create_card params.merge(description: 'Second') }
       let!(:fourth_card) { Cards.create_card params.merge(name: 'Fourty Second') }
       let!(:fifth_card) { Cards.create_card params.merge(description: 'Fourty Second') }
+      let!(:sixth_card) { Cards.create_card params.merge(name: 'Tags', tag_list: ['second']) }
 
       before(:each) do
         Cards.update_card(fifth_card.id, description: 'Fourty', author_id: author_id + 1)
         Cards.update_card(second_card.id, name: 'Notcond', author_id: author_id + 1)
       end
 
-      it { is_expected.to eq([fourth_card.id, second_card.id, third_card.id, fifth_card.id]) }
+      it { is_expected.to eq([fourth_card.id, second_card.id, third_card.id, fifth_card.id, sixth_card.id]) }
     end
   end
 end
