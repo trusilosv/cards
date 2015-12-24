@@ -4,6 +4,7 @@ module Cards
       keyword = Regexp.escape raw_keyword.strip
       search_phrase = "%#{keyword}%"
       items = Models::CardVersion.select("cards_card_versions.card_id as id, cards_card_versions.name, cards_card_versions.description, cards_card_versions.version")
+        .select("COALESCE((#{tag_scope.to_sql}), '{}') AS tag_names")
         .select("matched_versions.current")
         .joins("JOIN (#{card_versions_scope(project_id, search_phrase).to_sql}) AS matched_versions ON matched_versions.card_id = cards_card_versions.card_id AND matched_versions.version = cards_card_versions.version ")
         .order( <<-SQL
@@ -26,7 +27,7 @@ module Cards
     private
 
     def self.tag_scope
-      Models::Tag.joins(:taggings).where("cards_taggings.card_id = cards_cards.id").select("ARRAY_AGG(name ORDER BY name)")
+      Models::Tag.joins(:taggings).where("cards_taggings.card_id = cards_card_versions.card_id").select("ARRAY_AGG(name ORDER BY name)")
     end
 
     def self.card_versions_scope(project_id, search_phrase)
