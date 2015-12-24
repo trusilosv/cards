@@ -8,7 +8,7 @@ describe Cards::Search do
   let(:description) { "Description" }
   let(:params) { { name: name, description: description, tag_list: "design", author_id: author_id, project_id: project_id } }
   let!(:first_card) { Cards.create_card(params) }
-  let!(:second_card) { Cards.create_card(params.merge(name: 'Second', tag_list: ['bug'])) }
+  let!(:second_card) { Cards.create_card(params.merge(name: 'Second', tag_list: ['bug', 'second'])) }
 
   describe '.by_keyword' do
     subject { described_class.by_keyword(project_id, keyword) }
