@@ -3,7 +3,7 @@ module Cards
     def self.by_keyword(project_id, raw_keyword)
       keyword = Regexp.escape raw_keyword.strip
       search_phrase = "%#{keyword}%"
-      version_items = Models::CardVersion.select("cards_card_versions.card_id as id, cards_card_versions.name, cards_card_versions.description, cards_card_versions.version")
+      version_items = Models::CardVersion.select("cards_card_versions.card_id as id, cards_card_versions.name, cards_card_versions.description, cards_card_versions.version, cards_card_versions.author_id")
         .select("COALESCE((#{tag_scope('cards_card_versions.card_id').to_sql}), '{}') AS tag_names")
         .select("matched_versions.current")
         .joins("JOIN (#{card_versions_scope(project_id, search_phrase).to_sql}) AS matched_versions ON matched_versions.card_id = cards_card_versions.card_id AND matched_versions.version = cards_card_versions.version ")
@@ -30,7 +30,7 @@ module Cards
     end
 
     def self.search_in_tags_scope(project_id, search_phrase)
-      Models::Card.select("cards_cards.id, cards_cards.name, cards_cards.description, cards_cards.version")
+      Models::Card.select("cards_cards.id, cards_cards.name, cards_cards.description, cards_cards.version, cards_cards.author_id")
         .select("COALESCE((#{tag_scope('cards_cards.id').to_sql}), '{}') AS tag_names")
         .select("'t'::boolean AS current")
         .joins(<<-SQL
