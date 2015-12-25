@@ -3,16 +3,19 @@ module Cards
     def self.by_keyword(project_id, raw_keyword)
       keyword = Regexp.escape raw_keyword.strip
       search_phrase = "%#{keyword}%"
-      items = Models::CardVersion.select("cards_card_versions.card_id as id, cards_card_versions.name, cards_card_versions.description, cards_card_versions.version")
-        .select("COALESCE((#{tag_scope.to_sql}), '{}') AS tag_names")
+      version_items = Models::CardVersion.select("cards_card_versions.card_id as id, cards_card_versions.name, cards_card_versions.description, cards_card_versions.version")
+        .select("COALESCE((#{tag_scope('cards_card_versions.card_id').to_sql}), '{}') AS tag_names")
         .select("matched_versions.current")
-        .joins("JOIN (#{card_versions_scope(project_id, search_phrase).to_sql} UNION #{search_in_tags_scope(project_id, search_phrase).to_sql}) AS matched_versions ON matched_versions.card_id = cards_card_versions.card_id AND matched_versions.version = cards_card_versions.version ")
+        .joins("JOIN (#{card_versions_scope(project_id, search_phrase).to_sql}) AS matched_versions ON matched_versions.card_id = cards_card_versions.card_id AND matched_versions.version = cards_card_versions.version ")
         .order( <<-SQL
           (case
           when cards_card_versions.name ilike '#{search_phrase}' then 1 when cards_card_versions.description ilike '#{search_phrase}' then 2 else 3 end)
         SQL
         )
         .order{ [matched_versions.current.desc, cards_card_versions.updated_at.desc] }
+        .index_by(&:id)
+      tag_items = search_in_tags_scope(project_id, search_phrase).index_by(&:id)
+      items = version_items.merge(tag_items).values
       Cards.collection_to_open_structs(items)
     end
 
@@ -26,13 +29,13 @@ module Cards
 
     private
 
-    def self.tag_scope
-      Models::Tag.joins(:taggings).where("cards_taggings.card_id = cards_card_versions.card_id").select("ARRAY_AGG(name ORDER BY name)")
+    def self.tag_scope(card_id_sql)
+      Models::Tag.joins(:taggings).where("cards_taggings.card_id = #{card_id_sql}").select("ARRAY_AGG(name ORDER BY name)")
     end
 
     def self.search_in_tags_scope(project_id, search_phrase)
-      Models::Card.select("cards_cards.id as card_id")
-        .select("cards_cards.version")
+      Models::Card.select("cards_cards.id, cards_cards.name, cards_cards.description, cards_cards.version")
+        .select("COALESCE((#{tag_scope('cards_cards.id').to_sql}), '{}') AS tag_names")
         .select("'t'::boolean AS current")
         .joins(<<-SQL
           LEFT JOIN cards_taggings ON cards_taggings.card_id = cards_cards.id
@@ -42,6 +45,7 @@ module Cards
         .where(project_id: project_id)
         .where { (cards_tags.name =~ my { search_phrase }) }
         .group("cards_cards.id")
+        .order{ cards_cards.updated_at.desc }
     end
 
     def self.card_versions_scope(project_id, search_phrase)
