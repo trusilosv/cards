@@ -7,11 +7,7 @@ module Cards
         .select("COALESCE((#{tag_scope('cards_card_versions.card_id').to_sql}), '{}') AS tag_names")
         .select("matched_versions.current")
         .joins("JOIN (#{card_versions_scope(project_id, search_phrase).to_sql}) AS matched_versions ON matched_versions.card_id = cards_card_versions.card_id AND matched_versions.version = cards_card_versions.version ")
-        .order( <<-SQL
-          (case
-          when cards_card_versions.name ilike '#{search_phrase}' then 1 when cards_card_versions.description ilike '#{search_phrase}' then 2 else 3 end)
-        SQL
-        )
+        .order(order_clase_by_versions(search_phrase))
         .order{ [matched_versions.current.desc, cards_card_versions.updated_at.desc] }
         .index_by(&:id)
       tag_items = search_in_tags_scope(project_id, search_phrase).index_by(&:id)
@@ -60,6 +56,17 @@ module Cards
           (cards_card_versions.description =~ my { search_phrase } )
         }
         .group("cards_cards.id")
+    end
+
+    def self.order_clase_by_versions(search_phrase)
+      versions_table = Models::CardVersion.arel_table
+      Arel::Nodes::SqlLiteral.new <<-SQL
+        (CASE
+          WHEN #{versions_table[:name].matches(search_phrase).to_sql} THEN 1
+          WHEN #{versions_table[:description].matches(search_phrase).to_sql} THEN 2
+          ELSE 3
+        END)
+      SQL
     end
   end
 end
