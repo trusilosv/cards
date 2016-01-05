@@ -1,8 +1,7 @@
 module Cards
   module Search
     def self.by_keyword(project_id, raw_keyword)
-      keyword = Regexp.escape raw_keyword.strip
-      search_phrase = "%#{keyword}%"
+      search_phrase = "%#{raw_keyword}%"
       version_items = Models::CardVersion.select("cards_card_versions.card_id as id, cards_card_versions.name, cards_card_versions.description, cards_card_versions.version, cards_card_versions.author_id")
         .select("COALESCE((#{tag_scope('cards_card_versions.card_id').to_sql}), '{}') AS tag_names")
         .select("matched_versions.current")
