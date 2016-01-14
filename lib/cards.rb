@@ -89,11 +89,17 @@ module Cards
   end
 
   def self.destroy_card(card_id)
-    Models::Card.find(card_id).destroy_card
+    Models::Card.find(card_id).update_attributes(mark_as_deleted: true)
     nil
   end
 
-  def self.rollback_card(card_id)
+  def self.toggle_card(card_id)
+    card = Models::Card.find(card_id)
+    card.update_attributes(mark_as_deleted: !card.mark_as_deleted?)
+    nil
+  end
+
+  def self.cancel_card(card_id)
     Models::Card.find(card_id).destroy
     nil
   end
