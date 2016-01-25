@@ -10,13 +10,12 @@ module Rails
   end
 end
 
-module Cards
-  def self.table_name_prefix
-    'cards_'
-  end
-end
-
 ActiveSupport::Dependencies.autoload_paths << File.dirname(Pathname.new(__FILE__).dirname + '../app/models/cards')
+
+Cards.setup do |c|
+  c.database = "cards_test"
+  c.table_prefix = "cards_"
+end
 
 include ActiveRecord::Tasks
 config = YAML.load_file('spec/database.yml')

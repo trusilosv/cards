@@ -5,7 +5,9 @@ require 'cards/search'
 require 'squeel'
 
 module Cards
-  mattr_accessor :common_tags
+  mattr_accessor(:common_tags) { [] }
+  mattr_accessor(:database) { "please_configure_database" }
+  mattr_accessor(:table_prefix) { "" }
 
   autoload :Models, 'cards/models'
   # autoload :Card, 'cards/models/card'
@@ -14,8 +16,12 @@ module Cards
   # autoload :Tag, 'cards/models/tag'
   # autoload :Tagging, 'cards/models/tagging'
 
-  def self.common_tags
-    @@common_tags || []
+  def self.setup
+    yield(self)
+  end
+
+  def self.table_name_prefix
+    table_prefix
   end
 
   #TODO: Move not-deleted tags functionality to tracker.
