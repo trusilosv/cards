@@ -6,6 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 group :development, :test do
+  gem "geminabox-rake"
   gem "rspec"
   gem "pg"
   gem "byebug"
