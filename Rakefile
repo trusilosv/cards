@@ -6,7 +6,7 @@ rescue LoadError
 end
 
 require 'geminabox/rake'
-Geminabox::Rake.install
+Geminabox::Rake.install host: ENV["RUBYGEMS_CONNECTION"]
 
 require 'rspec/core/rake_task'
 
