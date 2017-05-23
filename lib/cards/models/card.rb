@@ -6,7 +6,7 @@ module Cards
       include Versioning::Model
 
       attr_accessible :description, :name, :version, :tag_list, :project_id, :author_id, :parent_id, :mark_as_deleted
-      has_versioning only: ['name', 'description'], time_interval: 20.seconds
+      has_versioning only: ['name', 'description']
       has_many :taggings, inverse_of: :card
       has_many :tags, -> { uniq }, through: :taggings, dependent: :destroy
       has_many :attachments, class_name: "FileAttachment", dependent: :destroy
