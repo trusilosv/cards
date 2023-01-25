@@ -1,0 +1,11 @@
+test:
+  adapter: postgresql
+  database: cards_test
+  username: tracker
+  password: epyfnm
+
+cards_test:
+  adapter: postgresql
+  database: cards_test
+  username: tracker
+  password: epyfnm
