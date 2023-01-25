@@ -1,5 +1,4 @@
 require 'active_record'
-require 'protected_attributes'
 require 'cards/files'
 require 'cards/search'
 require 'squeel'
