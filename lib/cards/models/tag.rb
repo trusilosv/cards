@@ -1,7 +1,7 @@
 module Cards
   module Models
     class Tag < CardsBase
-      attr_accessible :name, :project_id
+      attr_writer :name, :project_id
 
       has_many :taggings
 

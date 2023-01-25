@@ -5,7 +5,7 @@ module Cards
     class Card < CardsBase
       include Versioning::Model
 
-      attr_accessible :description, :name, :version, :tag_list, :project_id, :author_id, :parent_id, :mark_as_deleted
+      attr_writer :description, :name, :version, :tag_list, :project_id, :author_id, :parent_id, :mark_as_deleted
       has_versioning only: ['name', 'description']
       has_many :taggings, inverse_of: :card
       has_many :tags, -> { uniq }, through: :taggings, dependent: :destroy

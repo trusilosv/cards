@@ -1,7 +1,7 @@
 module Cards
   module Models
     class CardVersion < CardsBase
-      attr_protected
+      attr_reader
       belongs_to :card
 
       before_save :set_version

@@ -3,7 +3,7 @@ module Cards
     class FileAttachment < CardsBase
       include Paperclip::Glue
 
-      attr_protected
+      attr_reader
 
       belongs_to :card, touch: true
 

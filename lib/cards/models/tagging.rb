@@ -4,7 +4,7 @@ module Cards
       belongs_to :tag
       belongs_to :card, inverse_of: :taggings
 
-      attr_accessible :tag, :card, :card_id, :tag_id
+      attr_writer :tag, :card, :card_id, :tag_id
 
       before_validation :set_project_id
 
